@@ -1,0 +1,47 @@
+## Spring DATASOURCE (DataSourceAutoConfiguration & DataSourceProperties)
+spring:
+  main:
+    allow-bean-definition-overriding: true
+
+#  datasource:
+##    url: jdbc:mysql://localhost:3306/rental?useSSL=false
+##    &createDatabaseIfNotExist=true
+##    username: root
+##    password:
+#    url: jdbc:mysql://bdf05b57e98b9c:29ed01c9@us-cdbr-east-06.cleardb.net/heroku_92c50516db68778?reconnect=true&useSSL=false&createDatabaseIfNotExist=true
+#    username: bdf05b57e98b9c #heroku
+#    password: 29ed01c9
+#    database: heroku_92c50516db68778
+#  data:
+##    mongodb:
+#      #      user: test
+#      #      password: passwordvalue
+##      uri: mongodb://localhost:27017
+##      database: rental
+#  jpa:
+#    show-sql: true
+#    generate-ddl: true
+#    properties:
+#      hibernate:
+#        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+#        ddl-auto: create
+#  rabbitmq:
+#    dynamic: true
+#    host: localhost
+#    port: 5672
+#    username: guest
+#    password: guest
+
+
+#rental:
+#  rabbitmq:
+#    exchange: save-bill-topic
+#    queue: save-bill-queue
+#    routingkey: save-bill-routing-key
+
+server:
+#  host: localhost
+  port: 8282
+
+
+
