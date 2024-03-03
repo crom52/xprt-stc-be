@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/stc/namada-me")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class NamadaController {
+public class ProposalController {
     ObjectMapper objectMapper = new ObjectMapper().setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
 
     @GetMapping("/proposals")
