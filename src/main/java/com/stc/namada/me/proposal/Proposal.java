@@ -1,4 +1,4 @@
-package com.stc.namada.me;
+package com.stc.namada.me.proposal;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;

@@ -43,5 +43,9 @@ server:
 #  host: localhost
   port: 8282
 
+indexer:
+  api:
+    url: http://namada-indexer-testnet.stakingsphere.com:30303
+
 
 
