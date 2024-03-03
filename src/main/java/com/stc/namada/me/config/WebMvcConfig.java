@@ -9,7 +9,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("localhost:8282", "http://jecbox.com", "https://jecbox.com", "localhost:5000")
+                .allowedOrigins("localhost:8282", "http://jecbox.com", "https://jecbox.com", "localhost:5000", "https://namada-me-be-0c5a9f264e40.herokuapp.com", "http://namada-me-be-0c5a9f264e40.herokuapp.com")
                 .allowedMethods("GET", "PUT", "POST", "PATCH", "DELETE", "OPTIONS")
                 .allowCredentials(true);
     }
