@@ -12,7 +12,7 @@ spring:
 #    username: bdf05b57e98b9c #heroku
 #    password: 29ed01c9
 #    database: heroku_92c50516db68778
-#  data:
+#  validatorInnerData:
 ##    mongodb:
 #      #      user: test
 #      #      password: passwordvalue
