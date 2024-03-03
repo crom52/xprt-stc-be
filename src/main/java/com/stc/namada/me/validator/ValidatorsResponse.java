@@ -19,6 +19,6 @@ public class ValidatorsResponse {
     @Builder.Default
     String message = "OK";
     @Builder.Default
-    String status = "0";
+    String code = "0";
     ValidatorInnerData data;
 }
