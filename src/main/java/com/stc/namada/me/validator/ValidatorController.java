@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.Map;
 import java.util.Optional;
 
@@ -64,4 +66,30 @@ public class ValidatorController {
                                                                                  ValidatorInnerData.class);
         return ValidatorsResponse.builder().data(validatorsValidatorInnerData).build();
     }
+
+//    public static void main(String[] args) {
+//        try {
+//            // Execute the command
+//            Process process = Runtime.getRuntime().exec("echo 'hello'");
+//
+//            // Read the output of the command
+//            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+//            StringBuilder output = new StringBuilder();
+//            String line;
+//            while ((line = reader.readLine()) != null) {
+//                output.append(line).append("\n");
+//            }
+//
+//            // Wait for the command to finish
+//            process.waitFor();
+//
+//            // Close the reader
+//            reader.close();
+//
+//            System.out.println(output.toString());
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            System.out.println("Error executing command: " + e.getMessage());
+//        }
+//    }
 }
