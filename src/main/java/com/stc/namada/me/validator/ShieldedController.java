@@ -21,10 +21,10 @@ public class ShieldedController {
         String rs = "Transferring has failed";
         try {
             // Execute the command
+            String homeDirectory = System.getProperty("user.home");
             String[] envp = new String[]{"$NAMADA_WALLET_PASSWORD=Ptc686grt09@123456", "TOKEN=" + token, "AMOUNT=" + amount, "SOURCE=" + source, "TARGET=" + target};
+            Process process = Runtime.getRuntime().exec(new String[]{"bash", "-c", "cd " + homeDirectory + " && export $NAMADA_WALLET_PASSWORD; export TOKEN; export AMOUNT; export SOURCE; export TARGET; " + COMMAND_SHIELDED_TRANSFER}, envp);
 
-            // Execute the command
-            Process process = Runtime.getRuntime().exec(new String[]{"cd ~", "bash", "-c", "export $NAMADA_WALLET_PASSWORD; export TOKEN; export AMOUNT; export SOURCE; export TARGET; " + COMMAND_SHIELDED_TRANSFER}, envp);
 
             // Read the output of the command
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
