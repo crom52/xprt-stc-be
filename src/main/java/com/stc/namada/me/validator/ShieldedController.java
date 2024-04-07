@@ -24,7 +24,7 @@ public class ShieldedController {
             String[] envp = new String[]{"$NAMADA_WALLET_PASSWORD=Ptc686grt09@123456", "TOKEN=" + token, "AMOUNT=" + amount, "SOURCE=" + source, "TARGET=" + target};
 
             // Execute the command
-            Process process = Runtime.getRuntime().exec(new String[]{"bash", "-c", "export $NAMADA_WALLET_PASSWORD export TOKEN; export AMOUNT; export SOURCE; export TARGET; " + COMMAND_SHIELDED_TRANSFER}, envp);
+            Process process = Runtime.getRuntime().exec(new String[]{"cd ~", "bash", "-c", "export $NAMADA_WALLET_PASSWORD; export TOKEN; export AMOUNT; export SOURCE; export TARGET; " + COMMAND_SHIELDED_TRANSFER}, envp);
 
             // Read the output of the command
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
