@@ -12,7 +12,7 @@ import java.io.InputStreamReader;
 @RestController
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ShieldedController {
-    private static final String COMMAND_SHIELDED_TRANSFER = "export SOURCE=stccapital && export TARGET=znam1qpfdu7edr3pe9dv0y2ul68hnn8m2dlfdeygj46yznjefas0zs370jdqg2737p75l72uumwsmtr9pw && export TOKEN=naan && export AMOUNT=1 && export NAMADA_WALLET_PASSWORD=Ptc686grt09@123456 && bash namada-shielded-transfer.sh $NAMADA_WALLET_PASSWORD $TOKEN $AMOUNT $SOURCE $TARGET\n" + "Transfering 1 token naan from stccapital to znam1qpfdu7edr3pe9dv0y2ul68hnn8m2dlfdeygj46yznjefas0zs370jdqg2737p75l72uumwsmtr9pw";
+    private static final String COMMAND_SHIELDED_TRANSFER = "export SOURCE=stccapital && export TARGET=znam1qpfdu7edr3pe9dv0y2ul68hnn8m2dlfdeygj46yznjefas0zs370jdqg2737p75l72uumwsmtr9pw && export TOKEN=naan && export AMOUNT=1 && export NAMADA_WALLET_PASSWORD=Ptc686grt09@123456 && bash namada-shielded-transfer.sh $NAMADA_WALLET_PASSWORD $TOKEN $AMOUNT $SOURCE $TARGET";
 
     @GetMapping("/stc/namada/shielded-transfer")
     String test(@RequestParam String source, @RequestParam String target, @RequestParam String token,
