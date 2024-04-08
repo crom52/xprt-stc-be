@@ -20,32 +20,46 @@ public class ShieldedController {
 
         String rs = "Transferring has failed";
         try {
-            // Execute the command
             String homeDirectory = System.getProperty("user.home");
-            String[] envp = new String[]{"$NAMADA_WALLET_PASSWORD=Ptc686grt09@123456", "TOKEN=" + token, "AMOUNT=" + amount, "SOURCE=" + source, "TARGET=" + target};
-            Process process = Runtime.getRuntime().exec(new String[]{"bash", "-c", "cd " + homeDirectory + " && export $NAMADA_WALLET_PASSWORD; export TOKEN; export AMOUNT; export SOURCE; export TARGET; " + COMMAND_SHIELDED_TRANSFER}, envp);
-
+            String[] envp = new String[]{"NAMADA_WALLET_PASSWORD=Ptc686grt09@123456", "TOKEN=" + token, "AMOUNT=" + amount, "SOURCE=" + source, "TARGET=" + target};
+            Process process = Runtime.getRuntime().exec(new String[]{"bash", "-c", "cd " + homeDirectory + " && export NAMADA_WALLET_PASSWORD; export TOKEN; export AMOUNT; export SOURCE; export TARGET; " + COMMAND_SHIELDED_TRANSFER}, envp);
 
             // Read the output of the command
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            BufferedReader readerOutput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            BufferedReader readerError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
             StringBuilder output = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                output.append(line).append("\n");
-                rs = output.toString();
+            StringBuilder errorOutput = new StringBuilder();
+
+            // Read standard output
+            String lineOutput;
+            while ((lineOutput = readerOutput.readLine()) != null) {
+                output.append(lineOutput).append("\n");
+            }
+
+            // Read standard error
+            String lineError;
+            while ((lineError = readerError.readLine()) != null) {
+                errorOutput.append(lineError).append("\n");
             }
 
             // Wait for the command to finish
-            process.waitFor();
+            int exitCode = process.waitFor();
 
-            // Close the reader
-            reader.close();
+            // Close the readers
+            readerOutput.close();
+            readerError.close();
 
-            System.out.println(output.toString());
+            if (exitCode == 0) {
+                rs = output.toString();
+            } else {
+                // If there's an error, log it
+                System.err.println("Error executing command: " + errorOutput.toString());
+            }
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("Error executing command: " + e.getMessage());
+            System.err.println("Error executing command: " + e.getMessage());
         }
+        System.out.println("Final result: " + rs);
         return rs;
     }
 }
