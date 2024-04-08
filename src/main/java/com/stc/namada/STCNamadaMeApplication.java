@@ -8,7 +8,10 @@ import org.springframework.context.annotation.ComponentScan;
 //@EnableJpaAuditing
 //@EnableConfigurationProperties
 public class STCNamadaMeApplication {
+
     public static void main(String[] args) {
+        String homeDirectory = System.getProperty("user.home");
+        System.out.println("Directory: " + homeDirectory);
         SpringApplication.run(STCNamadaMeApplication.class, args);
     }
 }
