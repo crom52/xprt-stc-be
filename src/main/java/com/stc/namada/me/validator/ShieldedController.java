@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStreamReader;
 
 @RestController
@@ -25,6 +26,10 @@ public class ShieldedController {
 
             String[] envp = new String[]{"NAMADA_WALLET_PASSWORD=Ptc686grt09@123456", "TOKEN=" + token, "AMOUNT=" + amount, "SOURCE=" + source, "TARGET=" + target};
             Process process = Runtime.getRuntime().exec(COMMAND_SHIELDED_TRANSFER);
+            ProcessBuilder processBuilder = new ProcessBuilder();
+            processBuilder.directory(new File(homeDirectory));
+            processBuilder.command("bash", "-c",
+                                   "export SOURCE=stccapital && export TARGET=znam1qpfdu7edr3pe9dv0y2ul68hnn8m2dlfdeygj46yznjefas0zs370jdqg2737p75l72uumwsmtr9pw && export TOKEN=naan && export AMOUNT=1 && export NAMADA_WALLET_PASSWORD=Ptc686grt09@123456 && bash namada-shielded-transfer.sh $NAMADA_WALLET_PASSWORD $TOKEN $AMOUNT $SOURCE $TARGET");
 
             // Read the output of the command
             BufferedReader readerOutput = new BufferedReader(new InputStreamReader(process.getInputStream()));
