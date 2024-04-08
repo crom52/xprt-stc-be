@@ -12,7 +12,7 @@ import java.io.InputStreamReader;
 @RestController
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ShieldedController {
-    private static final String COMMAND_SHIELDED_TRANSFER = "bash namada-shielded-transfer.sh $NAMADA_WALLET_PASSWORD $TOKEN $AMOUNT $SOURCE $TARGET";
+    private static final String COMMAND_SHIELDED_TRANSFER = "export SOURCE=stccapital && export TARGET=znam1qpfdu7edr3pe9dv0y2ul68hnn8m2dlfdeygj46yznjefas0zs370jdqg2737p75l72uumwsmtr9pw && export TOKEN=naan && export AMOUNT=1 && export NAMADA_WALLET_PASSWORD=Ptc686grt09@123456 && bash namada-shielded-transfer.sh $NAMADA_WALLET_PASSWORD $TOKEN $AMOUNT $SOURCE $TARGET\n" + "Transfering 1 token naan from stccapital to znam1qpfdu7edr3pe9dv0y2ul68hnn8m2dlfdeygj46yznjefas0zs370jdqg2737p75l72uumwsmtr9pw";
 
     @GetMapping("/stc/namada/shielded-transfer")
     String test(@RequestParam String source, @RequestParam String target, @RequestParam String token,
@@ -22,7 +22,7 @@ public class ShieldedController {
         try {
             String homeDirectory = System.getProperty("user.home");
             String[] envp = new String[]{"NAMADA_WALLET_PASSWORD=Ptc686grt09@123456", "TOKEN=" + token, "AMOUNT=" + amount, "SOURCE=" + source, "TARGET=" + target};
-            Process process = Runtime.getRuntime().exec(new String[]{"bash", "-c", "cd " + homeDirectory + " && export NAMADA_WALLET_PASSWORD; export TOKEN; export AMOUNT; export SOURCE; export TARGET; " + COMMAND_SHIELDED_TRANSFER}, envp);
+            Process process = Runtime.getRuntime().exec(COMMAND_SHIELDED_TRANSFER);
 
             // Read the output of the command
             BufferedReader readerOutput = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -33,6 +33,7 @@ public class ShieldedController {
             // Read standard output
             String lineOutput;
             while ((lineOutput = readerOutput.readLine()) != null) {
+                System.out.println(lineOutput);
                 output.append(lineOutput).append("\n");
             }
 
@@ -58,6 +59,7 @@ public class ShieldedController {
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println("Error executing command: " + e.getMessage());
+            return e.getMessage();
         }
         System.out.println("Final result: " + rs);
         return rs;
