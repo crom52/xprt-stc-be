@@ -22,20 +22,20 @@ public class ShieldedController {
         try {
             String homeDirectory = System.getProperty("user.home");
             System.out.println(homeDirectory);
-            String COMMAND_SHIELDED_TRANSFER = "cd homeDirectory && export SOURCE=stccapital && export TARGET=znam1qpfdu7edr3pe9dv0y2ul68hnn8m2dlfdeygj46yznjefas0zs370jdqg2737p75l72uumwsmtr9pw && export TOKEN=naan && export AMOUNT=1 && export NAMADA_WALLET_PASSWORD=Ptc686grt09@123456 && bash namada-shielded-transfer.sh $NAMADA_WALLET_PASSWORD $TOKEN $AMOUNT $SOURCE $TARGET";
 
-            String[] envp = new String[]{"NAMADA_WALLET_PASSWORD=Ptc686grt09@123456", "TOKEN=" + token, "AMOUNT=" + amount, "SOURCE=" + source, "TARGET=" + target};
-            //            Process process = Runtime.getRuntime().exec(COMMAND_SHIELDED_TRANSFER);
+            StringBuilder transferCommand = new StringBuilder();
+            transferCommand.append("export SOURCE=").append(source);
+            transferCommand.append(" && export TARGET=").append(target);
+            transferCommand.append(" && export TOKEN=").append(token);
+            transferCommand.append(" && export AMOUNT=").append(amount);
+            transferCommand.append(" && export NAMADA_WALLET_PASSWORD=Ptc686grt09@123456");
+            transferCommand.append(
+                    " && bash namada-shielded-transfer.sh $NAMADA_WALLET_PASSWORD $TOKEN $AMOUNT $SOURCE $TARGET");
+
 
             ProcessBuilder processBuilder = new ProcessBuilder();
             processBuilder.directory(new File(homeDirectory));
-            processBuilder.command("bash", "-c",
-                                   "export SOURCE="  + source
-                                    +" && export TARGET=" + target
-                                           + " && export TOKEN=" + token
-                                           + " && export AMOUNT=" + amount
-                                           + " && export NAMADA_WALLET_PASSWORD=Ptc686grt09@123456"
-                                           + " && bash namada-shielded-transfer.sh $NAMADA_WALLET_PASSWORD $TOKEN $AMOUNT $SOURCE $TARGET");
+            processBuilder.command("bash", "-c", transferCommand.toString());
             Process process = processBuilder.start();
 
             // Read the output of the command
