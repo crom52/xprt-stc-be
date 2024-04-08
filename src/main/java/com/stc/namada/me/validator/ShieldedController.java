@@ -29,10 +29,13 @@ public class ShieldedController {
 
             ProcessBuilder processBuilder = new ProcessBuilder();
             processBuilder.directory(new File(homeDirectory));
-            processBuilder.command("bash", "-c", "export SOURCE=" + source, " && export TARGET=" + target,
-                                   " && export TOKEN=" + token, " && export AMOUNT=" + amount,
-                                   " && export NAMADA_WALLET_PASSWORD=Ptc686grt09@123456",
-                                   " && bash namada-shielded-transfer.sh $NAMADA_WALLET_PASSWORD $TOKEN $AMOUNT $SOURCE $TARGET");
+            processBuilder.command("bash", "-c",
+                                   "export SOURCE="  + source
+                                    +" && export TARGET=" + target
+                                           + " && export TOKEN=" + token
+                                           + " && export AMOUNT=" + amount
+                                           + " && export NAMADA_WALLET_PASSWORD=Ptc686grt09@123456"
+                                           + " && bash namada-shielded-transfer.sh $NAMADA_WALLET_PASSWORD $TOKEN $AMOUNT $SOURCE $TARGET");
             Process process = processBuilder.start();
 
             // Read the output of the command
