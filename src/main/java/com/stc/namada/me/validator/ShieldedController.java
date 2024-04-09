@@ -24,7 +24,7 @@ public class ShieldedController {
             System.out.println(homeDirectory);
 
             StringBuilder transferCommand = new StringBuilder();
-            transferCommand.append("export SOURCE=").append(source);
+            transferCommand.append("export SOURCE=").append("stccapital");
             transferCommand.append(" && export TARGET=").append(target);
             transferCommand.append(" && export TOKEN=").append(token);
             transferCommand.append(" && export AMOUNT=").append(amount);
