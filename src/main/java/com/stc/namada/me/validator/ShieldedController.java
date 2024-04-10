@@ -2,6 +2,7 @@ package com.stc.namada.me.validator;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,17 +10,30 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 @RestController
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ShieldedController {
+    final Executor executor;
+
+    public ShieldedController(Executor executor) {
+        this.executor = executor;
+    }
 
     @GetMapping("/stc/namada/shielded-transfer")
     String test(@RequestParam String source, @RequestParam String target, @RequestParam String token,
                 @RequestParam String amount) {
+        executor.execute(() -> processTransfer(source, target, token, amount));
 
-        String rs = "Transferring has failed";
+        return "Transaction is being processed";
+    }
+
+    @Async
+    void processTransfer(String source, String target, String token, String amount) {
         try {
+            String rs = "Transferring has failed";
             String homeDirectory = System.getProperty("user.home");
             System.out.println(homeDirectory);
 
@@ -70,12 +84,12 @@ public class ShieldedController {
                 // If there's an error, log it
                 System.err.println("Error executing command: " + errorOutput.toString());
             }
+            CompletableFuture.completedFuture(rs);
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println("Error executing command: " + e.getMessage());
-            return e.getMessage();
+            CompletableFuture.completedFuture(e.getMessage());
         }
-        System.out.println("Final result: " + rs);
-        return rs;
     }
+
 }
