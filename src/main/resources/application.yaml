@@ -41,7 +41,7 @@ spring:
 
 server:
 #  host: localhost
-  port: 8282
+#  port: 8282
 
 indexer:
   api:
