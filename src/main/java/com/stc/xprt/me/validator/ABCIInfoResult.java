@@ -1,24 +1,18 @@
-package com.stc.namada.me.proposal;
+package com.stc.xprt.me.validator;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
-
-import java.util.List;
 
 @Getter
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ListResponse<T> {
-    @Setter
-    List<T> list;
-
-    public static <T> ListResponse<T> of(List<T> list) {
-        ListResponse<T> response = new ListResponse<>();
-        response.setList(list);
-        return response;
-    }
+@AllArgsConstructor
+@NoArgsConstructor
+public class ABCIInfoResult {
+    ABCIInfoResultResponse response;
 }

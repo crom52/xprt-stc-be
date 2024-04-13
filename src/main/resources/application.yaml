@@ -41,11 +41,11 @@ spring:
 
 server:
 #  host: localhost
-#  port: 8282
+  port: 8383
 
 indexer:
   api:
-    url: http://namada-indexer-testnet.stakingsphere.com:30303
+    url: https://persistence-testnet-rpc.cosmonautstakes.com/
 
 
 

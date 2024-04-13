@@ -1,4 +1,4 @@
-package com.stc.namada.me.proposal;
+package com.stc.xprt.me.proposal;
 
 import lombok.Getter;
 

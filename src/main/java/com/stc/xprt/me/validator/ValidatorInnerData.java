@@ -1,4 +1,4 @@
-package com.stc.namada.me.validator;
+package com.stc.xprt.me.validator;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -7,16 +7,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
-@Getter
-@Builder
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetValidatorResult {
-    String blockHeight;
-    String count;
-    String total;
-    List<Validator> validators;
+@Builder
+@Getter
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+public class ValidatorInnerData {
+    String jsonrpc;
+    Integer id;
+    GetValidatorResult result;
 }

@@ -1,4 +1,4 @@
-package com.stc.namada.me.proposal;
+package com.stc.xprt.me.proposal;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -9,8 +9,6 @@ import lombok.Value;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.jackson.Jacksonized;
 import org.springframework.lang.Nullable;
-
-import java.util.List;
 
 @Getter
 @Builder

@@ -1,4 +1,4 @@
-package com.stc.namada.me.validator;
+package com.stc.xprt.me.validator;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -13,6 +13,7 @@ public class Validator {
     String address;
     String votingPower;
     PubKey pubKey;
+    String moniker;
 
     @Getter
     @FieldDefaults(level = AccessLevel.PRIVATE)

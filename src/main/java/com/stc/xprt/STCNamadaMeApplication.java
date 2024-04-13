@@ -1,8 +1,7 @@
-package com.stc.namada;
+package com.stc.xprt;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 //@EnableJpaAuditing

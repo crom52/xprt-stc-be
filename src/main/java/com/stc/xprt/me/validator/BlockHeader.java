@@ -1,23 +1,18 @@
-package com.stc.namada.me.proposal;
+package com.stc.xprt.me.validator;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.Map;
+import lombok.experimental.FieldDefaults;
 
 @Getter
-@Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProposalResponse {
-    @Builder.Default
-    String code = "0";
-    @Builder.Default
-    String message = "OK";
-    Object value;
+public class BlockHeader {
+    String height;
 }
