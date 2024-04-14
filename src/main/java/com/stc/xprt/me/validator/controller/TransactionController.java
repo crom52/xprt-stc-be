@@ -4,7 +4,6 @@ package com.stc.xprt.me.validator.controller;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,11 +19,17 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class TransactionController {
     final RestTemplate restTemplate = new RestTemplate();
-    @Value("${indexer.api.url}")
-    String xprtUrl;
+    final HealthCheckController healthCheckController;
+    //    @Value("${indexer.api.url}")
+    //    String xprtUrl;
 
     @GetMapping("/net_info")
     public Map getNetInfo() {
+        String xprtUrl = healthCheckController.getAliveRPC();
+        if (xprtUrl.isBlank()) {
+            throw new RuntimeException("There is no RPC endpoint alive");
+        }
+
         UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl(xprtUrl + "/net_info");
 
         return Optional.ofNullable(restTemplate.getForObject(urlBuilder.toUriString(), Map.class)).orElseGet(Map::of);

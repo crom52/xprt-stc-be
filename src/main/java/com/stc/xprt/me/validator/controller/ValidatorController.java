@@ -6,7 +6,6 @@ import com.stc.xprt.me.validator.ValidatorInnerData;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,13 +26,19 @@ public class ValidatorController {
                                                         .disable(FAIL_ON_UNKNOWN_PROPERTIES);
 
     final BlockController blockController;
-    @Value("${indexer.api.url}")
-    String xprtUrl;
+    final HealthCheckController healthCheckController;
+    //    @Value("${indexer.api.url}")
+    //    String xprtUrl;
 
     @GetMapping("/validators")
     public ValidatorInnerData getValidators(@RequestParam(defaultValue = "10") String num,
                                             @RequestParam(defaultValue = "1") String offset) throws JsonProcessingException {
 
+
+        String xprtUrl = healthCheckController.getAliveRPC();
+        if (xprtUrl.isBlank()) {
+            throw new RuntimeException("There is no RPC endpoint alive");
+        }
 
         Long latestBlock = blockController.getLatestBlockHeight();
 
