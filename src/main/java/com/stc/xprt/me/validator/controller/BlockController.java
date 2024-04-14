@@ -6,6 +6,7 @@ import com.stc.xprt.me.validator.ABCIInfoResultResponse;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -43,10 +44,10 @@ public class BlockController {
     @GetMapping("/block/{heightOrHash}")
     public Object getBlockDetail(@PathVariable String heightOrHash) {
         UriComponentsBuilder blockDetailUrl = UriComponentsBuilder.fromHttpUrl(xprtUrl);
-        if(heightOrHash.startsWith("0x")) {
-            blockDetailUrl.path("block_by_hash").queryParam("hash", "0x" + heightOrHash);
-        } else {
+        if(NumberUtils.isParsable(heightOrHash)) {
             blockDetailUrl.path("block").queryParam("height", heightOrHash);
+        } else {
+            blockDetailUrl.path("block_by_hash").queryParam("hash", "0x" + heightOrHash);
         }
 
         var result = Optional.ofNullable(restTemplate.getForObject(blockDetailUrl.toUriString(), Map.class))

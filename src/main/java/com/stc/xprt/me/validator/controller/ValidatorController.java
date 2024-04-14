@@ -3,7 +3,6 @@ package com.stc.xprt.me.validator.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stc.xprt.me.validator.ValidatorInnerData;
-import com.stc.xprt.me.validator.ValidatorsResponse;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -14,8 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import java.util.Optional;
 
 import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES;
 import static com.fasterxml.jackson.databind.PropertyNamingStrategy.SNAKE_CASE;
@@ -34,23 +31,20 @@ public class ValidatorController {
     String xprtUrl;
 
     @GetMapping("/validators")
-    public Object getValidators(@RequestParam(defaultValue = "10") String num,
-                                @RequestParam(defaultValue = "1") String offset) throws JsonProcessingException {
+    public ValidatorInnerData getValidators(@RequestParam(defaultValue = "10") String num,
+                                            @RequestParam(defaultValue = "1") String offset) throws JsonProcessingException {
 
 
         Long latestBlock = blockController.getLatestBlockHeight();
 
         if (latestBlock == null || latestBlock < 0) {
-            return ValidatorsResponse.builder().build();
+            return ValidatorInnerData.builder().build();
         }
 
         UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl(xprtUrl + "/validators")
                                                               .queryParam("height", latestBlock)
-                                                              .queryParam("per_page", num)
-                                                              .queryParam("page", offset);
+                                                              .queryParam("per_page", num).queryParam("page", offset);
 
-        var rs = Optional.ofNullable(restTemplate.getForObject(urlBuilder.toUriString(), ValidatorInnerData.class));
-
-        return ValidatorsResponse.builder().data(rs.orElseGet(ValidatorInnerData::new)).build();
+        return restTemplate.getForObject(urlBuilder.toUriString(), ValidatorInnerData.class);
     }
 }
