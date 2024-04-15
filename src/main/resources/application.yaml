@@ -41,11 +41,13 @@ spring:
 
 server:
 #  host: localhost
-  port: 8383
+  port: 30303
 
 indexer:
   api:
-    url: https://persistence-testnet-rpc.cosmonautstakes.com/
+#    url: https://persistence-testnet-rpc.cosmonautstakes.com/
+  rest:
+    url: https://rest.core.persistence.one
 
 
 
