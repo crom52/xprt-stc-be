@@ -15,22 +15,20 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @RequiredArgsConstructor
 public class HealthCheckController {
+    static List<String> rpcUrlList = List.of("https://rpc.core.persistence.one/",
+                                             "https://persistence-testnet-rpc.cosmonautstakes.com/",
+                                             "https://persistence-rpc.polkachu.com/",
+                                             "https://persistence-rpc.quantnode.tech/",
+                                             "https://rpc-persistence.architectnodes.com/",
+                                             "https://persistence-rpc.bluestake.net/",
+                                             "https://persistence-rpc.zenscape.one/");
     final RestTemplate restTemplate = new RestTemplate();
 
-    static List<String> rpcUrlList = List.of(
-            "https://rpc.core.persistence.one/",
-            "https://persistence-testnet-rpc.cosmonautstakes.com/",
-            "https://persistence-rpc.polkachu.com/",
-            "https://persistence-rpc.quantnode.tech/",
-            "https://rpc-persistence.architectnodes.com/",
-            "https://persistence-rpc.bluestake.net/",
-            "https://persistence-rpc.zenscape.one/");
-
     public String getAliveRPC() {
-        for(var rpcUrl : rpcUrlList) {
+        for (var rpcUrl : rpcUrlList) {
             UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl(rpcUrl).path("health");
             var response = restTemplate.getForObject(urlBuilder.toUriString(), Object.class);
-            if(response != null) {
+            if (response != null) {
                 return rpcUrl;
             }
         }
