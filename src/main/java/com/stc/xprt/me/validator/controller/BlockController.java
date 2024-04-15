@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -59,6 +61,20 @@ public class BlockController {
         var result = Optional.ofNullable(restTemplate.getForObject(blockDetailUrl.toUriString(), Map.class))
                              .orElse(Map.of());
         return result.getOrDefault("result", Map.of());
+    }
+
+    @GetMapping("/blocks")
+    Object getBlockList() throws InterruptedException {
+        Long latestHeight = this.getLatestBlockHeight();
+        List result = new ArrayList();
+        int i = 0;
+        while(i < 5) {
+            var block = this.getBlockDetail(String.valueOf(latestHeight - i));
+            i++;
+            result.add(block);
+            Thread.sleep(100);
+        }
+        return result;
     }
 
 }
