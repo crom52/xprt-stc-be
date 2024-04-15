@@ -38,7 +38,6 @@ public class BlockController {
 
     @GetMapping("/block/last")
     public Object getLatestBlockDetail() {
-        String xprtUrl = healthCheckController.getAliveRPC();
         Long latestHeight = this.getLatestBlockHeight();
         return getBlockDetail(String.valueOf(latestHeight));
     }

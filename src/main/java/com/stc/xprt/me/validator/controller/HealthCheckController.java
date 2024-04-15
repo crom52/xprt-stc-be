@@ -18,9 +18,9 @@ public class HealthCheckController {
     final RestTemplate restTemplate = new RestTemplate();
 
     static List<String> rpcUrlList = List.of(
+            "https://rpc.core.persistence.one/",
             "https://persistence-testnet-rpc.cosmonautstakes.com/",
             "https://persistence-rpc.polkachu.com/",
-            "https://rpc.core.persistence.one/",
             "https://persistence-rpc.quantnode.tech/",
             "https://rpc-persistence.architectnodes.com/",
             "https://persistence-rpc.bluestake.net/",
