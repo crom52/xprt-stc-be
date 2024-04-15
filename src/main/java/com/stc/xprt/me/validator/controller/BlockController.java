@@ -67,12 +67,9 @@ public class BlockController {
     Object getBlockList() throws InterruptedException {
         Long latestHeight = this.getLatestBlockHeight();
         List result = new ArrayList();
-        int i = 0;
-        while(i < 10) {
-            var block = this.getBlockDetail(String.valueOf(latestHeight - i));
-            i++;
+        while(result.size() < 10) {
+            var block = this.getBlockDetail(String.valueOf(latestHeight - result.size()));
             result.add(block);
-            Thread.sleep(50);
         }
         return result;
     }
