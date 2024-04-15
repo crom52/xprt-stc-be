@@ -56,10 +56,10 @@ public class TransactionController {
     public Object getTransactions(@RequestParam(value = "num", required = false, defaultValue = "10") Integer num,
                                   @RequestParam(value = "offset", required = false, defaultValue = "0") Integer offset,
                                   @RequestParam(value = "height", required = false) Long height) {
-        Long latestHeight = blockController.getLatestBlockHeight();
+//        Long latestHeight = blockController.getLatestBlockHeight();
 
         UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl(xprtUrl)
-                                                              .path("/cosmos/tx/v1beta1/txs/block/" + latestHeight)
+                                                              .path("/cosmos/tx/v1beta1/txs/block/" + height)
                                                               .queryParam("pagination.offset", offset)
                                                               .queryParam("pagination.limit", num)
                                                               .queryParam("pagination.count_total", true)
