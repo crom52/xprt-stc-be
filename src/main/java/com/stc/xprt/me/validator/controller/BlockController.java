@@ -68,11 +68,11 @@ public class BlockController {
         Long latestHeight = this.getLatestBlockHeight();
         List result = new ArrayList();
         int i = 0;
-        while(i < 5) {
+        while(i < 10) {
             var block = this.getBlockDetail(String.valueOf(latestHeight - i));
             i++;
             result.add(block);
-            Thread.sleep(100);
+            Thread.sleep(50);
         }
         return result;
     }
