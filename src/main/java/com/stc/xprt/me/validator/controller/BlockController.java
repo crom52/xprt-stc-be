@@ -64,10 +64,10 @@ public class BlockController {
     }
 
     @GetMapping("/blocks")
-    Object getBlockList() throws InterruptedException {
+    Object getBlockList() {
         Long latestHeight = this.getLatestBlockHeight();
         List result = new ArrayList();
-        while(result.size() < 10) {
+        while(result.size() < 6) {
             var block = this.getBlockDetail(String.valueOf(latestHeight - result.size()));
             result.add(block);
         }
