@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -52,6 +53,7 @@ public class TransactionController {
     }
 
     @GetMapping("tx/list")
+    @Cacheable(key = "#height", cacheNames = "getTransactions")
     public Object getTransactions(@RequestParam(value = "num", required = false, defaultValue = "10") Integer num,
                                   @RequestParam(value = "offset", required = false, defaultValue = "0") Integer offset,
                                   @RequestParam(value = "height", required = false) Long height) {
