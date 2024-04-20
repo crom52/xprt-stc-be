@@ -7,6 +7,8 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,10 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 @RequestMapping("/stc/xprt")
 @RestController
@@ -28,6 +33,9 @@ public class BlockController {
     final HealthCheckController healthCheckController;
     //    @Value("${indexer.api.url}")
     //    String xprtUrl;
+    static Map<Long, Object> lastBlockCacheMap = new ConcurrentHashMap<>();
+    static Map<String, Object> blockDetailCacheMap = new ConcurrentHashMap();
+
 
     public Long getLatestBlockHeight() {
         String xprtUrl = healthCheckController.getAliveRPC();
@@ -39,9 +47,16 @@ public class BlockController {
     }
 
     @GetMapping("/block/last")
+    @Cacheable(cacheNames = "getLatestBlockDetail")
     public Object getLatestBlockDetail() {
         Long latestHeight = this.getLatestBlockHeight();
-        return getBlockDetail(String.valueOf(latestHeight));
+        if(lastBlockCacheMap.containsKey(latestHeight)) {
+            return lastBlockCacheMap.get(latestHeight);
+        }
+
+        var latestBlockDetail =  getBlockDetail(String.valueOf(latestHeight));
+        lastBlockCacheMap.put(latestHeight, latestBlockDetail);
+        return latestBlockDetail;
     }
 
     @GetMapping("/block/{heightOrHash}")
@@ -49,6 +64,9 @@ public class BlockController {
         String xprtUrl = healthCheckController.getAliveRPC();
         if (xprtUrl.isBlank()) {
             throw new RuntimeException("There is no RPC endpoint alive");
+        }
+        if(blockDetailCacheMap.containsKey(heightOrHash)) {
+            return blockDetailCacheMap.get(heightOrHash);
         }
 
         UriComponentsBuilder blockDetailUrl = UriComponentsBuilder.fromHttpUrl(xprtUrl);
@@ -58,9 +76,10 @@ public class BlockController {
             blockDetailUrl.path("block_by_hash").queryParam("hash", "0x" + heightOrHash);
         }
 
-        var result = Optional.ofNullable(restTemplate.getForObject(blockDetailUrl.toUriString(), Map.class))
-                             .orElse(Map.of());
-        return result.getOrDefault("result", Map.of());
+        Object result = Optional.ofNullable(restTemplate.getForObject(blockDetailUrl.toUriString(), Map.class))
+                             .orElse(Map.of()).getOrDefault("result", Map.of());
+        blockDetailCacheMap.put(heightOrHash, result);
+        return result;
     }
 
     @GetMapping("/blocks")
@@ -74,4 +93,10 @@ public class BlockController {
         return result;
     }
 
+    @Scheduled(fixedDelay = 900000)
+    public void clearCache() {
+        lastBlockCacheMap.clear();
+        blockDetailCacheMap.clear();
+        System.out.println("Block cache cleared.");
+    }
 }
