@@ -16,9 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -33,29 +31,36 @@ public class BlockController {
     final HealthCheckController healthCheckController;
     //    @Value("${indexer.api.url}")
     //    String xprtUrl;
-    static Map<Long, Object> lastBlockCacheMap = new ConcurrentHashMap<>();
+    static Map<Long, Object> lastBlockDetailCacheMap = new ConcurrentHashMap<>();
     static Map<String, Object> blockDetailCacheMap = new ConcurrentHashMap();
+    static List<Long> latestBlockCacheMap = new ArrayList<>(1);
+
 
 
     public Long getLatestBlockHeight() {
-        String xprtUrl = healthCheckController.getAliveRPC();
-        UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl(xprtUrl).path("abci_info");
+        if(latestBlockCacheMap.isEmpty()) {
+            String xprtUrl = healthCheckController.getAliveRPC();
+            UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl(xprtUrl).path("abci_info");
 
-        return Optional.ofNullable(restTemplate.getForObject(urlBuilder.toUriString(), ABCIInfo.class))
-                       .map(ABCIInfo::getResult).map(ABCIInfoResult::getResponse)
-                       .map(ABCIInfoResultResponse::getLastBlockHeight).orElse(Long.MIN_VALUE);
+            var latestBlock =  Optional.ofNullable(restTemplate.getForObject(urlBuilder.toUriString(), ABCIInfo.class))
+                                       .map(ABCIInfo::getResult).map(ABCIInfoResult::getResponse)
+                                       .map(ABCIInfoResultResponse::getLastBlockHeight).orElse(Long.MIN_VALUE);
+            latestBlockCacheMap.add(latestBlock);
+        }
+        return latestBlockCacheMap.get(0);
     }
 
     @GetMapping("/block/last")
     @Cacheable(cacheNames = "getLatestBlockDetail")
     public Object getLatestBlockDetail() {
         Long latestHeight = this.getLatestBlockHeight();
-        if(lastBlockCacheMap.containsKey(latestHeight)) {
-            return lastBlockCacheMap.get(latestHeight);
+
+        if(lastBlockDetailCacheMap.containsKey(latestHeight)) {
+            return lastBlockDetailCacheMap.get(latestHeight);
         }
 
         var latestBlockDetail =  getBlockDetail(String.valueOf(latestHeight));
-        lastBlockCacheMap.put(latestHeight, latestBlockDetail);
+        lastBlockDetailCacheMap.put(latestHeight, latestBlockDetail);
         return latestBlockDetail;
     }
 
@@ -94,9 +99,15 @@ public class BlockController {
     }
 
     @Scheduled(fixedDelay = 900000)
-    public void clearCache() {
-        lastBlockCacheMap.clear();
+    public void clearBlockCache() {
+        lastBlockDetailCacheMap.clear();
         blockDetailCacheMap.clear();
-        System.out.println("Block cache cleared.");
+        System.out.println("Block detail it statcache cleared.");
+    }
+
+    @Scheduled(fixedDelay = 15000)
+    public void clearLastBlockCache() {
+        latestBlockCacheMap.clear();
+        System.out.println("Latest Block cache cleared.");
     }
 }
