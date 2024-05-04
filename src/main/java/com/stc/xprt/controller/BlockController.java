@@ -1,8 +1,8 @@
-package com.stc.xprt.me.validator.controller;
+package com.stc.xprt.controller;
 
-import com.stc.xprt.me.validator.ABCIInfo;
-import com.stc.xprt.me.validator.ABCIInfoResult;
-import com.stc.xprt.me.validator.ABCIInfoResultResponse;
+import com.stc.xprt.dto.ABCIInfo;
+import com.stc.xprt.dto.ABCIInfoResult;
+import com.stc.xprt.dto.ABCIInfoResultResponse;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -27,14 +27,11 @@ import java.util.concurrent.ConcurrentHashMap;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @RequiredArgsConstructor
 public class BlockController {
-    final RestTemplate restTemplate = new RestTemplate();
+    final RestTemplate restTemplate;
     final HealthCheckController healthCheckController;
-    //    @Value("${indexer.api.url}")
-    //    String xprtUrl;
     static Map<Long, Object> lastBlockDetailCacheMap = new ConcurrentHashMap<>();
     static Map<String, Object> blockDetailCacheMap = new ConcurrentHashMap<>();
     static List<Long> latestBlockCacheMap = new ArrayList<>(1);
-
 
 
     public Long getLatestBlockHeight() {

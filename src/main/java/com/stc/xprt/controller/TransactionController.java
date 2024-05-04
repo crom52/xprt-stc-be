@@ -1,4 +1,4 @@
-package com.stc.xprt.me.validator.controller;
+package com.stc.xprt.controller;
 
 
 import lombok.AccessLevel;
@@ -17,9 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -30,12 +28,10 @@ import java.util.concurrent.ConcurrentHashMap;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @RequiredArgsConstructor
 public class TransactionController {
-    static Map txsCacheMap = new ConcurrentHashMap();
-    static Map decodedTxsCacheMap = new ConcurrentHashMap();
-    final RestTemplate restTemplate = new RestTemplate();
+    static Map txsCacheMap = new ConcurrentHashMap<>();
+    static Map decodedTxsCacheMap = new ConcurrentHashMap<>();
+    final RestTemplate restTemplate;
     final HealthCheckController healthCheckController;
-    //    @Value("${indexer.api.url}")
-    //    String xprtUrl;
     final BlockController blockController;
     @Value("${indexer.rest.url}")
     String xprtUrl;

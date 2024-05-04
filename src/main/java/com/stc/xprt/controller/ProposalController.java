@@ -1,4 +1,4 @@
-package com.stc.xprt.me.proposal;
+package com.stc.xprt.controller;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -72,7 +72,7 @@ public class ProposalController {
     }
 
     @Scheduled(fixedDelay = 900000)
-    public void clearLastBlockCache() {
+    public void clearProposalCache() {
         proposalsCacheMap.clear();
         System.out.println("Proposals cache cleared.");
     }

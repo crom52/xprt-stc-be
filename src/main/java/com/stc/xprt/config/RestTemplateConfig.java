@@ -1,4 +1,4 @@
-package com.stc.xprt.me.config;
+package com.stc.xprt.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

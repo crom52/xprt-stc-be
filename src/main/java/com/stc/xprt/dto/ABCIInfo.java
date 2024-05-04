@@ -1,4 +1,4 @@
-package com.stc.xprt.me.validator;
+package com.stc.xprt.dto;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -13,6 +13,6 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @NoArgsConstructor
-public class ABCIInfoResult {
-    ABCIInfoResultResponse response;
+public class ABCIInfo {
+    ABCIInfoResult result;
 }

@@ -1,9 +1,8 @@
-package com.stc.xprt.me.validator.controller;
+package com.stc.xprt.controller;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,7 +26,7 @@ public class HealthCheckController {
                                              "https://rpc-persistence.architectnodes.com/",
                                              "https://persistence-rpc.bluestake.net/",
                                              "https://persistence-rpc.zenscape.one/");
-    final RestTemplate restTemplate = new RestTemplate();
+    final RestTemplate restTemplate;
 
     public String getAliveRPC() {
         for (var rpcUrl : rpcUrlList) {

@@ -1,4 +1,4 @@
-package com.stc.xprt.me.validator.controller;
+package com.stc.xprt.controller;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

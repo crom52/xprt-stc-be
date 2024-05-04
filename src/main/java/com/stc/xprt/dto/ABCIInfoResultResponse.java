@@ -1,22 +1,18 @@
-package com.stc.xprt.me.validator;
+package com.stc.xprt.dto;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
+import lombok.experimental.FieldDefaults;
 
 @Getter
-@Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetValidatorResult {
-    String blockHeight;
-    String count;
-    String total;
-    List<Validator> validators;
+public class ABCIInfoResultResponse {
+    Long lastBlockHeight;
 }
