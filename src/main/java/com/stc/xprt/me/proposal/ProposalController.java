@@ -30,7 +30,7 @@ public class ProposalController {
 
     @GetMapping("/proposals")
     public Object getProposals(
-            @RequestParam(value = "proposal_status", defaultValue = "PROPOSAL_STATUS_UNSPECIFIED") String proposalStatus,
+            @RequestParam(value = "proposal_status") String proposalStatus,
             @RequestParam(required = false, value = "voter") String voter,
             @RequestParam(required = false, value = "depositor") String depositor,
             @RequestParam(required = false, value = "key") String key,
