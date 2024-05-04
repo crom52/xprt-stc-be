@@ -55,7 +55,7 @@ public class ProposalController {
         return proposals;
     }
 
-    @Scheduled(fixedDelay = 15000)
+    @Scheduled(fixedDelay = 900000)
     public void clearLastBlockCache() {
         proposalsCacheMap.clear();
         System.out.println("Proposals cache cleared.");

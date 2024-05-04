@@ -32,7 +32,7 @@ public class BlockController {
     //    @Value("${indexer.api.url}")
     //    String xprtUrl;
     static Map<Long, Object> lastBlockDetailCacheMap = new ConcurrentHashMap<>();
-    static Map<String, Object> blockDetailCacheMap = new ConcurrentHashMap();
+    static Map<String, Object> blockDetailCacheMap = new ConcurrentHashMap<>();
     static List<Long> latestBlockCacheMap = new ArrayList<>(1);
 
 
@@ -105,7 +105,7 @@ public class BlockController {
         System.out.println("Block detail it statcache cleared.");
     }
 
-    @Scheduled(fixedDelay = 15000)
+    @Scheduled(fixedDelay = 900000)
     public void clearLastBlockCache() {
         latestBlockCacheMap.clear();
         System.out.println("Latest Block cache cleared.");
