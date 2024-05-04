@@ -6,6 +6,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,6 +42,7 @@ public class ProposalController {
         if(proposalsCacheMap.containsKey(cacheKey)) {
             return proposalsCacheMap.get(cacheKey);
         }
+
         Optional<String> optStatus = proposalStatus.isBlank() ? Optional.empty() : Optional.of(proposalStatus);
         UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl(xprtUrl).path("cosmos/gov/v1/proposals")
                                                               .queryParamIfPresent("proposal_status", optStatus)
@@ -53,6 +55,19 @@ public class ProposalController {
 
         var proposals= restTemplate.getForObject(urlBuilder.toUriString(), Map.class);
         proposalsCacheMap.put(cacheKey, proposals);
+        return proposals;
+    }
+
+    @GetMapping("/proposal/{id}")
+    public Object getProposalById(@PathVariable String id) {
+        if(proposalsCacheMap.containsKey(id)) {
+            return proposalsCacheMap.get(id);
+        }
+
+        UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl(xprtUrl).path("cosmos/gov/v1/proposals/")
+                                                              .path(id);
+        var proposals= restTemplate.getForObject(urlBuilder.toUriString(), Map.class);
+        proposalsCacheMap.put(id, proposals);
         return proposals;
     }
 
