@@ -13,6 +13,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 @RestController
@@ -30,7 +31,7 @@ public class ProposalController {
 
     @GetMapping("/proposals")
     public Object getProposals(
-            @RequestParam(value = "proposal_status") String proposalStatus,
+            @RequestParam(value = "proposal_status", required = false) String proposalStatus,
             @RequestParam(required = false, value = "voter") String voter,
             @RequestParam(required = false, value = "depositor") String depositor,
             @RequestParam(required = false, value = "key") String key,
@@ -40,11 +41,11 @@ public class ProposalController {
         if(proposalsCacheMap.containsKey(cacheKey)) {
             return proposalsCacheMap.get(cacheKey);
         }
-
+        Optional<String> optStatus = proposalStatus.isBlank() ? Optional.empty() : Optional.of(proposalStatus);
         UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl(xprtUrl).path("cosmos/gov/v1/proposals")
+                                                              .queryParamIfPresent("proposal_status", optStatus)
                                                               .queryParam("voter", voter)
                                                               .queryParam("depositor", depositor).queryParam("key", key)
-                                                              .queryParam("proposal_status", proposalStatus)
                                                               .queryParam("pagination.offset", offset)
                                                               .queryParam("pagination.limit", num)
                                                               .queryParam("pagination.count_total", true)
