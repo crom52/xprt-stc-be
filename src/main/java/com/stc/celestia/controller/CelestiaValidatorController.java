@@ -1,4 +1,4 @@
-package com.stc.xprt.controller;
+package com.stc.celestia.controller;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -16,17 +16,17 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-@RequestMapping("/stc/xprt")
+@RequestMapping("/stc/celestia")
 @RestController
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @RequiredArgsConstructor
-public class ValidatorController {
+public class CelestiaValidatorController {
     final RestTemplate restTemplate;
 
     static Map<String, Object> validatorCacheMap = new ConcurrentHashMap<>();
 
-    @Value("${indexer.rest.xprt}")
-    String xprtUrl;
+    @Value("${indexer.rest.celestia}")
+    String celestiaController;
 
     @GetMapping("/validators")
     public Object getValidators(@RequestParam(defaultValue = "10") String num,
@@ -38,7 +38,7 @@ public class ValidatorController {
             return validatorCacheMap.get(cacheKey);
         }
 
-        UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl(xprtUrl + "/cosmos/staking/v1beta1/validators")
+        UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl(celestiaController + "/cosmos/staking/v1beta1/validators")
                                                               .queryParam("pagination.count_total", true)
                                                               .queryParam("pagination.reverse", true)
                                                               .queryParam("pagination.limit", num)
@@ -57,7 +57,7 @@ public class ValidatorController {
             return validatorCacheMap.get(id);
         }
 
-        UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl(xprtUrl + "/cosmos/staking/v1beta1/validators/").path(id);
+        UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl(celestiaController + "/cosmos/staking/v1beta1/validators/").path(id);
         var validatorDetail = restTemplate.getForObject(urlBuilder.toUriString(), Map.class);
         validatorCacheMap.put(id, validatorDetail);
         return validatorDetail;

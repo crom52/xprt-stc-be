@@ -1,4 +1,4 @@
-package com.stc.xprt.controller;
+package com.stc.celestia.controller;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -17,13 +17,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-@RestController
-@RequestMapping("/stc/xprt")
+@RestController(value = "CelestiaProposalController")
+@RequestMapping("/stc/celestia")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @RequiredArgsConstructor
-public class ProposalController {
-    @Value("${indexer.rest.xprt}")
-    String xprtUrl;
+public class CelestiaProposalController {
+    @Value("${indexer.rest.celestia}")
+    String celestiaUrl;
 
     final RestTemplate restTemplate;
     static Map<String, Object> proposalsCacheMap = new ConcurrentHashMap<>();
@@ -44,7 +44,7 @@ public class ProposalController {
         }
 
         Optional<String> optStatus = proposalStatus.isBlank() ? Optional.empty() : Optional.of(proposalStatus);
-        UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl(xprtUrl).path("cosmos/gov/v1/proposals")
+        UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl(celestiaUrl).path("cosmos/gov/v1/proposals")
                                                               .queryParamIfPresent("proposal_status", optStatus)
                                                               .queryParam("voter", voter)
                                                               .queryParam("depositor", depositor).queryParam("key", key)
@@ -64,7 +64,7 @@ public class ProposalController {
             return proposalsCacheMap.get(id);
         }
 
-        UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl(xprtUrl).path("cosmos/gov/v1/proposals/")
+        UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl(celestiaUrl).path("cosmos/gov/v1/proposals/")
                                                               .path(id);
         var proposals= restTemplate.getForObject(urlBuilder.toUriString(), Map.class);
         proposalsCacheMap.put(id, proposals);

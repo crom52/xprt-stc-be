@@ -27,24 +27,19 @@ import java.util.concurrent.ConcurrentHashMap;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @RequiredArgsConstructor
 public class BlockController {
-    final RestTemplate restTemplate;
-    final HealthCheckController healthCheckController;
     static Map<Long, Object> lastBlockDetailCacheMap = new ConcurrentHashMap<>();
     static Map<String, Object> blockDetailCacheMap = new ConcurrentHashMap<>();
     static List<Long> latestBlockCacheMap = new ArrayList<>(1);
-
+    final RestTemplate restTemplate;
+    final HealthCheckController healthCheckController;
 
     public Long getLatestBlockHeight() {
-        if(latestBlockCacheMap.isEmpty()) {
-            String xprtUrl = healthCheckController.getAliveRPC();
-            UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl(xprtUrl).path("abci_info");
+        String xprtUrl = healthCheckController.getAliveRPC();
+        UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl(xprtUrl).path("abci_info");
 
-            var latestBlock =  Optional.ofNullable(restTemplate.getForObject(urlBuilder.toUriString(), ABCIInfo.class))
-                                       .map(ABCIInfo::getResult).map(ABCIInfoResult::getResponse)
-                                       .map(ABCIInfoResultResponse::getLastBlockHeight).orElse(Long.MIN_VALUE);
-            latestBlockCacheMap.add(latestBlock);
-        }
-        return latestBlockCacheMap.get(0);
+        return Optional.ofNullable(restTemplate.getForObject(urlBuilder.toUriString(), ABCIInfo.class))
+                       .map(ABCIInfo::getResult).map(ABCIInfoResult::getResponse)
+                       .map(ABCIInfoResultResponse::getLastBlockHeight).orElse(Long.MIN_VALUE);
     }
 
     @GetMapping("/block/last")
@@ -52,11 +47,11 @@ public class BlockController {
     public Object getLatestBlockDetail() {
         Long latestHeight = this.getLatestBlockHeight();
 
-        if(lastBlockDetailCacheMap.containsKey(latestHeight)) {
+        if (lastBlockDetailCacheMap.containsKey(latestHeight)) {
             return lastBlockDetailCacheMap.get(latestHeight);
         }
 
-        var latestBlockDetail =  getBlockDetail(String.valueOf(latestHeight));
+        var latestBlockDetail = getBlockDetail(String.valueOf(latestHeight));
         lastBlockDetailCacheMap.put(latestHeight, latestBlockDetail);
         return latestBlockDetail;
     }
@@ -67,7 +62,7 @@ public class BlockController {
         if (xprtUrl.isBlank()) {
             throw new RuntimeException("There is no RPC endpoint alive");
         }
-        if(blockDetailCacheMap.containsKey(heightOrHash)) {
+        if (blockDetailCacheMap.containsKey(heightOrHash)) {
             return blockDetailCacheMap.get(heightOrHash);
         }
 
@@ -79,7 +74,7 @@ public class BlockController {
         }
 
         Object result = Optional.ofNullable(restTemplate.getForObject(blockDetailUrl.toUriString(), Map.class))
-                             .orElse(Map.of()).getOrDefault("result", Map.of());
+                                .orElse(Map.of()).getOrDefault("result", Map.of());
         blockDetailCacheMap.put(heightOrHash, result);
         return result;
     }
@@ -88,7 +83,7 @@ public class BlockController {
     Object getBlockList() {
         Long latestHeight = this.getLatestBlockHeight();
         List result = new ArrayList();
-        while(result.size() < 6) {
+        while (result.size() < 6) {
             var block = this.getBlockDetail(String.valueOf(latestHeight - result.size()));
             result.add(block);
         }

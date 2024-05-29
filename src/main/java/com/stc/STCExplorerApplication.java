@@ -1,4 +1,4 @@
-package com.stc.xprt;
+package com.stc;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -11,8 +11,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class STCExplorerApplication {
 
     public static void main(String[] args) {
-        String homeDirectory = System.getProperty("user.home");
-        System.out.println("Directory: " + homeDirectory);
         SpringApplication.run(STCExplorerApplication.class, args);
     }
 }

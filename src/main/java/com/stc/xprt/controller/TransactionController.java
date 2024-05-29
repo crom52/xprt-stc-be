@@ -33,7 +33,7 @@ public class TransactionController {
     final RestTemplate restTemplate;
     final HealthCheckController healthCheckController;
     final BlockController blockController;
-    @Value("${indexer.rest.url}")
+    @Value("${indexer.rest.xprt}")
     String xprtUrl;
 
     @GetMapping("/net_info")

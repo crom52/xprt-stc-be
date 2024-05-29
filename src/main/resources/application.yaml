@@ -47,7 +47,8 @@ indexer:
   api:
 #    url: https://persistence-testnet-rpc.cosmonautstakes.com/
   rest:
-    url: https://rest.core.persistence.one
+    xprt: https://rest.core.persistence.one
+    celestia: https://celestia.api.explorers.guru
 
 
 

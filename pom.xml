@@ -4,10 +4,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>crom</groupId>
-    <artifactId>namada-me</artifactId>
+    <artifactId>stc-explorer</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
-    <name>namada-me</name>
+    <name>stc-explorer</name>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
