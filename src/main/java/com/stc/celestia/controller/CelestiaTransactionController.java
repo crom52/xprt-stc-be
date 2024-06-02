@@ -1,113 +1,87 @@
-//package com.stc.celestia.controller;
-//
-//
-//import lombok.AccessLevel;
-//import lombok.RequiredArgsConstructor;
-//import lombok.experimental.FieldDefaults;
-//import org.springframework.beans.factory.annotation.Value;
-//import org.springframework.cache.annotation.Cacheable;
-//import org.springframework.http.HttpEntity;
-//import org.springframework.http.HttpHeaders;
-//import org.springframework.http.MediaType;
-//import org.springframework.scheduling.annotation.Scheduled;
-//import org.springframework.web.bind.annotation.GetMapping;
-//import org.springframework.web.bind.annotation.RequestMapping;
-//import org.springframework.web.bind.annotation.RequestParam;
-//import org.springframework.web.bind.annotation.RestController;
-//import org.springframework.web.client.RestTemplate;
-//import org.springframework.web.util.UriComponentsBuilder;
-//
-//import java.util.ArrayList;
-//import java.util.List;
-//import java.util.Map;
-//import java.util.Optional;
-//import java.util.concurrent.ConcurrentHashMap;
-//
-//@RequestMapping("/stc/celestia")
-//@RestController(value = "CelestiaTransactionController")
-//@FieldDefaults(level = AccessLevel.PRIVATE)
-//@RequiredArgsConstructor
-//public class CelestiaTransactionController {
-//    static Map txsCacheMap = new ConcurrentHashMap<>();
-//    static Map decodedTxsCacheMap = new ConcurrentHashMap<>();
-//    final RestTemplate restTemplate;
-//    final HealthCheckController healthCheckController;
-//    final CelestiaBlockController blockController;
-//    @Value("${indexer.rest.xprt}")
-//    String xprtUrl;
-//
-//    @GetMapping("/net_info")
-//    public Map getNetInfo() {
-//        String xprtUrl = healthCheckController.getAliveRPC();
-//        if (xprtUrl.isBlank()) {
-//            throw new RuntimeException("There is no RPC endpoint alive");
-//        }
-//
-//        UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl(xprtUrl + "/net_info");
-//
-//        return Optional.ofNullable(restTemplate.getForObject(urlBuilder.toUriString(), Map.class)).orElseGet(Map::of);
-//    }
-//
-//    @GetMapping("tx/list")
-//    @Cacheable(key = "#height", cacheNames = "getTransactions")
-//    public Object getTransactions(@RequestParam(value = "num", required = false, defaultValue = "10") Integer num,
-//                                  @RequestParam(value = "offset", required = false, defaultValue = "0") Integer offset,
-//                                  @RequestParam(value = "height", required = false) Long height) {
-//        //        Long latestHeight = blockController.getLatestBlockHeight();
-//
-//        String cacheKey = height.toString() + num.toString() + offset.toString();
-//        if (txsCacheMap.containsKey(height)) {
-//            return txsCacheMap.get(cacheKey);
-//        }
-//
-//        UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl(xprtUrl)
-//                                                              .path("/cosmos/tx/v1beta1/txs/block/" + height)
-//                                                              .queryParam("pagination.offset", offset)
-//                                                              .queryParam("pagination.limit", num)
-//                                                              .queryParam("pagination.count_total", true)
-//                                                              .queryParam("pagination.reverse", true);
-//
-//        Map response = restTemplate.getForObject(urlBuilder.toUriString(), Map.class);
-//        if (response == null || response.get("block") == null) {
-//            return null;
-//        }
-//
-//        var data = ((Map<String, Object>) response.get("block")).get("data");
-//        List txs = ((ArrayList) ((Map) data).get("txs"));
-//        List decodedTxs = new ArrayList();
-//
-//        if (txs.isEmpty()) {
-//            ((Map<String, Object>) data).put("decoded_txs", List.of());
-//            return response;
-//        }
-//
-//        for (var decoded : txs) {
-//            decodedTxs.add(decodeTxs(decoded.toString()));
-//        }
-//        ((Map<String, Object>) data).put("decoded_txs", decodedTxs);
-//        txsCacheMap.put(cacheKey, response);
-//        return response;
-//    }
-//
-//    private Object decodeTxs(String encoded) {
-//        if (decodedTxsCacheMap.containsKey(encoded)) {
-//            return decodedTxsCacheMap.get(encoded);
-//        }
-//        UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl(xprtUrl).path("/cosmos/tx/v1beta1/decode");
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setContentType(MediaType.APPLICATION_JSON);
-//        headers.setAccept(List.of(MediaType.APPLICATION_JSON));
-//        var body = Map.of("tx_bytes", encoded);
-//        HttpEntity request = new HttpEntity<>(body, headers);
-//        var result = restTemplate.postForObject(urlBuilder.toUriString(), request, Map.class);
-//        decodedTxsCacheMap.put(encoded, result);
-//        return result;
-//    }
-//
-//    @Scheduled(fixedDelay = 900000)
-//    public void clearCache() {
-//        decodedTxsCacheMap.clear();
-//        txsCacheMap.clear();
-//        System.out.println("Transaction Cache cleared.");
-//    }
-//}
+package com.stc.celestia.controller;
+
+
+import com.stc.celestia.dto.CelestiaTransactionResponse;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+
+import static org.apache.commons.lang3.math.NumberUtils.isParsable;
+
+@RequestMapping("/stc/celestia")
+@RestController
+@FieldDefaults(level = AccessLevel.PRIVATE)
+@RequiredArgsConstructor
+public class CelestiaTransactionController {
+    static Map<String, Object> txsCacheMap = new ConcurrentHashMap();
+    final RestTemplate restTemplate;
+    @Value("${indexer.rest.celestia}")
+    String xprtUrl;
+
+    @GetMapping("tx/list")
+    public CelestiaTransactionResponse getTransactions(@RequestParam(value = "num", required = false, defaultValue = "10") Integer num) {
+        UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl(xprtUrl).path("/api/v1/txs")
+                                                              .queryParam("limit", num);
+
+        CelestiaTransactionResponse response = restTemplate.getForObject(urlBuilder.toUriString(),
+                                                                         CelestiaTransactionResponse.class);
+        if (response == null || response.getData().isEmpty()) {
+            return null;
+        }
+
+        for (var txs : response.getData()) {
+            String cacheKey = txs.getHeight() + "-" + txs.getHash();
+            txsCacheMap.put(cacheKey, List.of(txs));
+        }
+        return response;
+    }
+
+    @GetMapping("tx/{heightOrHash}")
+    public Object getTransactionBy(@PathVariable String heightOrHash) {
+        List result = this.findTxsInCache(heightOrHash);
+
+        if (CollectionUtils.isEmpty(result)) {
+            Optional.ofNullable(getTransactions(999)).map(CelestiaTransactionResponse::getData).orElse(List.of());
+            result = this.findTxsInCache(heightOrHash);
+        }
+        return result;
+    }
+
+    private List<Object> findTxsInCache(String heightOrHash) {
+        if(heightOrHash == null) {
+            return null;
+        }
+        List<Object> res = new ArrayList<>();
+        txsCacheMap.forEach((key, value) -> {
+            if (key.contains(heightOrHash)) {
+                res.add(value);
+            }
+        });
+        return res;
+    }
+
+
+    @Scheduled(fixedDelay = 600000)
+    public void clearCache() {
+        txsCacheMap.clear();
+        System.out.println("Transaction Cache cleared.");
+    }
+}

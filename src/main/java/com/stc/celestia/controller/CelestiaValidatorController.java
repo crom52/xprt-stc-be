@@ -5,14 +5,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -26,44 +27,33 @@ public class CelestiaValidatorController {
     static Map<String, Object> validatorCacheMap = new ConcurrentHashMap<>();
 
     @Value("${indexer.rest.celestia}")
-    String celestiaController;
+    String celestiaUrl;
 
     @GetMapping("/validators")
-    public Object getValidators(@RequestParam(defaultValue = "10") String num,
-                                @RequestParam(defaultValue = "0") String offset) {
-
-        String cacheKey = "validators" + num + offset;
-
-        if(validatorCacheMap.containsKey(cacheKey)) {
-            return validatorCacheMap.get(cacheKey);
+    public Object getValidators() {
+        UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl(celestiaUrl + "/api/v1/validators");
+        var validatorsResponse = restTemplate.getForObject(urlBuilder.toUriString(), List.class);
+        if(CollectionUtils.isEmpty(validatorsResponse)) {
+            return List.of();
         }
-
-        UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl(celestiaController + "/cosmos/staking/v1beta1/validators")
-                                                              .queryParam("pagination.count_total", true)
-                                                              .queryParam("pagination.reverse", true)
-                                                              .queryParam("pagination.limit", num)
-                                                              .queryParam("pagination.offset", offset);
-
-        var validators = restTemplate.getForObject(urlBuilder.toUriString(), Map.class);
-        validatorCacheMap.put(cacheKey, validators);
-        return validators;
+        validatorsResponse.forEach(e -> validatorCacheMap.put(((Map)e).get("operatorAddress").toString(), e ));
+        return validatorsResponse;
     }
 
-    @GetMapping("/validator/{id}")
-    public Object getValidatorById(@PathVariable String id) {
-
-
-        if (validatorCacheMap.containsKey(id)) {
-            return validatorCacheMap.get(id);
+    @GetMapping("/validator/{idOrMoniker}")
+    public Object getValidatorById(@PathVariable String idOrMoniker) {
+        if(!idOrMoniker.startsWith("celestiavaloper")) {
+            return "Not ID format";
         }
 
-        UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl(celestiaController + "/cosmos/staking/v1beta1/validators/").path(id);
-        var validatorDetail = restTemplate.getForObject(urlBuilder.toUriString(), Map.class);
-        validatorCacheMap.put(id, validatorDetail);
-        return validatorDetail;
+        if (validatorCacheMap.containsKey(idOrMoniker)) {
+            return validatorCacheMap.get(idOrMoniker);
+        }
+        getValidators();
+        return validatorCacheMap.get(idOrMoniker);
     }
 
-    @Scheduled(fixedDelay = 900000)
+    @Scheduled(fixedDelay = 300000)
     public void clearValidatorCache() {
         validatorCacheMap.clear();
         System.out.println("Validator cache cleared.");
