@@ -32,7 +32,7 @@ public class CelestiaProposalController {
             return proposalsCacheMap.get(cacheKey);
         }
 
-        UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl(celestiaTestnetUrl).path("/api/v1/proposals");
+        UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl(celestiaTestnetUrl).path("/api/v1/proposals-m");
         var proposals= restTemplate.getForObject(urlBuilder.toUriString(), Object.class);
         proposalsCacheMap.put(cacheKey, proposals);
         return proposals;
