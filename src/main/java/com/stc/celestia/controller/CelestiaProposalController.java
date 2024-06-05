@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @RequiredArgsConstructor
 public class CelestiaProposalController {
-    @Value("${indexer.rest.celestia-testnet}")
+    @Value("${indexer.rest.celestia}")
     String celestiaTestnetUrl;
 
     final RestTemplate restTemplate;
