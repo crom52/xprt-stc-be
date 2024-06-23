@@ -37,7 +37,7 @@ public class SideBlockController {
     String sideUrl;
 
     public Long getLatestBlockHeight() {
-        UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl("http://49.13.123.160:17457/abci_info");
+        UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl("https://side.rpc.t.stavr.tech/abci_info");
 
         return Optional.ofNullable(restTemplate.getForObject(urlBuilder.toUriString(), ABCIInfo.class))
                        .map(ABCIInfo::getResult).map(ABCIInfoResult::getResponse)

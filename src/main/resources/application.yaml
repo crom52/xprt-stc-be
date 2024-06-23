@@ -49,7 +49,7 @@ indexer:
   rest:
     xprt: https://rest.core.persistence.one
     celestia: https://celestia.api.explorers.guru
-    side: http://49.13.123.160:1317/cosmos/base/tendermint/v1beta1
+    side: https://side.api.t.stavr.tech/cosmos/base/tendermint/v1beta1
 
 
 
