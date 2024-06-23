@@ -46,7 +46,7 @@ public class SideTransactionController {
         }
 
         UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl(
-                                                                      "http://49.13.123.160:1317/cosmos/tx/v1beta1/txs/block/").path(String.valueOf(height))
+                                                                      "https://side.api.t.stavr.tech/cosmos/tx/v1beta1/txs/block/").path(String.valueOf(height))
                                                               .queryParam("pagination.offset", offset)
                                                               .queryParam("pagination.limit", num)
                                                               .queryParam("pagination.count_total", true)
@@ -79,7 +79,7 @@ public class SideTransactionController {
             return decodedTxsCacheMap.get(encoded);
         }
         UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl(
-                "http://49.13.123.160:1317/cosmos/tx/v1beta1/decode");
+                "https://side.api.t.stavr.tech/cosmos/tx/v1beta1/decode");
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(List.of(MediaType.APPLICATION_JSON));

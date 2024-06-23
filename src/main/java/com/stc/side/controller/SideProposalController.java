@@ -42,7 +42,7 @@ public class SideProposalController {
         }
 
         Optional<String> optStatus = proposalStatus.isBlank() ? Optional.empty() : Optional.of(proposalStatus);
-        UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl("http://49.13.123.160:1317/cosmos/gov/v1/proposals")
+        UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl("https://side.api.t.stavr.tech/cosmos/gov/v1/proposals")
                                                               .queryParamIfPresent("proposal_status", optStatus)
                                                               .queryParam("voter", voter)
                                                               .queryParam("depositor", depositor).queryParam("key", key)
@@ -62,7 +62,7 @@ public class SideProposalController {
             return proposalsCacheMap.get(id);
         }
 
-        UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl("http://49.13.123.160:1317/cosmos/gov/v1/proposals/")
+        UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl("https://side.api.t.stavr.tech/cosmos/gov/v1/proposals/")
                                                               .path(id);
         var proposals= restTemplate.getForObject(urlBuilder.toUriString(), Map.class);
         proposalsCacheMap.put(id, proposals);

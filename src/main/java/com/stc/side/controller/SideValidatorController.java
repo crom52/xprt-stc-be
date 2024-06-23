@@ -36,7 +36,7 @@ public class SideValidatorController {
             return validatorCacheMap.get(cacheKey);
         }
 
-        UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl("http://49.13.123.160:1317/cosmos/staking/v1beta1/validators")
+        UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl("https://side.api.t.stavr.tech/cosmos/staking/v1beta1/validators")
                                                               .queryParam("status", status)
                                                               .queryParam("pagination.count_total", true)
                                                               .queryParam("pagination.reverse", true)
@@ -56,7 +56,7 @@ public class SideValidatorController {
             return validatorCacheMap.get(id);
         }
 
-        UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl("http://49.13.123.160:1317/cosmos/staking/v1beta1/validators/").path(id);
+        UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl("https://side.api.t.stavr.tech/cosmos/staking/v1beta1/validators/").path(id);
         var validatorDetail = restTemplate.getForObject(urlBuilder.toUriString(), Map.class);
         validatorCacheMap.put(id, validatorDetail);
         return validatorDetail;
