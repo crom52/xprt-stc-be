@@ -1,14 +1,12 @@
 package com.stc.side.controller;
 
-import com.stc.xprt.dto.ABCIInfo;
-import com.stc.xprt.dto.ABCIInfoResult;
-import com.stc.xprt.dto.ABCIInfoResultResponse;
+import com.stc.side.controller.dto.RestLatestBlockDTO;
+import com.stc.side.controller.dto.RestLatestBlockDTO.LatestBlock;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,8 +16,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -37,11 +33,12 @@ public class SideBlockController {
     String sideUrl;
 
     public Long getLatestBlockHeight() {
-        UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl("https://side.rpc.t.stavr.tech/abci_info");
+        UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl(
+                "https://side.api.t.stavr.tech/cosmos/base/tendermint/v1beta1/blocks/latest");
 
-        return Optional.ofNullable(restTemplate.getForObject(urlBuilder.toUriString(), ABCIInfo.class))
-                       .map(ABCIInfo::getResult).map(ABCIInfoResult::getResponse)
-                       .map(ABCIInfoResultResponse::getLastBlockHeight).orElse(Long.MIN_VALUE);
+        return Optional.ofNullable(restTemplate.getForObject(urlBuilder.toUriString(), RestLatestBlockDTO.class))
+                       .map(RestLatestBlockDTO::getBlock).map(LatestBlock::getHeader)
+                       .map(RestLatestBlockDTO.BlockHeader::getHeight).map(Long::valueOf).orElse(Long.MIN_VALUE);
     }
 
     @GetMapping("/block/last")
@@ -79,13 +76,13 @@ public class SideBlockController {
     @GetMapping("/blocks")
     Object getBlockList() {
         List result = new ArrayList();
-        if(blockDetailCacheMap.size() >= 6) {
+        if (blockDetailCacheMap.size() >= 6) {
             return blockDetailCacheMap.values().stream().limit(6).toList();
         }
         Long latestHeight = this.getLatestBlockHeight();
         while (result.size() < 6) {
             long previousHeight = latestHeight - result.size();
-            if(blockDetailCacheMap.containsKey(String.valueOf(previousHeight))){
+            if (blockDetailCacheMap.containsKey(String.valueOf(previousHeight))) {
                 result.add(blockDetailCacheMap.get(String.valueOf(previousHeight)));
                 continue;
             }
