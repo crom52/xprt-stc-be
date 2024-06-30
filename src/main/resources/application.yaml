@@ -50,6 +50,7 @@ indexer:
     xprt: https://rest.core.persistence.one
     celestia: https://celestia.api.explorers.guru
     side: https://side.api.t.stavr.tech/cosmos/base/tendermint/v1beta1
+    router: https://router-api.polkachu.com
 
 
 
